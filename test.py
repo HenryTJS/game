@@ -1,9 +1,21 @@
-from functions_all import show_start_screen, run_game
+from functions_all import show_start_screen, run_game, cleanup
 
-if __name__ == '__main__':
-    while True:
-        # 显示开始界面，获取用户选择的控制方式
-        mouse_control = show_start_screen()
-        if mouse_control is not None:
-            # 启动游戏主循环
-            run_game(mouse_control)
+def main():
+    try:
+        while True:
+            control_type = show_start_screen()
+            if control_type == -1:
+                break
+
+            result = run_game(control_type)
+            if result == "quit":
+                break
+            elif result == "menu":
+                continue
+
+    finally:
+        cleanup()
+
+
+if __name__ == "__main__":
+    main()

@@ -4,35 +4,57 @@ import pygame
 WIDTH, HEIGHT = 512, 768
 pygame.init()
 
-# ====================== 资源加载 ======================
+# 资源文件路径
+IMAGE_PATHS = {
+    "bg0": "start_bg0.jpg",
+    "bg1": "map1.jpg",
+    "start": "start.png",
+    "plane": "plane.png",
+    "boss_1": "boss_1.png",
+    "boss_2": "boss_2.png",
+    "bullet": "alien_bullet.png",
+    "missile": "feidan.png",
+    "enemies": [f"alien_{i}.png" for i in range(1, 6)]
+}
+
+# 加载图片资源
+def load_image(path):
+    return pygame.image.load(path)
 
 # 背景图片
-bg0 = pygame.image.load("start_bg0.jpg")
-bg1 = pygame.image.load("map1.jpg")
-start = pygame.image.load("start.png")
+bg0 = load_image(IMAGE_PATHS["bg0"])
+bg1 = load_image(IMAGE_PATHS["bg1"])
+start = load_image(IMAGE_PATHS["start"])
 
 # 玩家飞机
-plane = pygame.image.load("plane.png")
+plane = load_image(IMAGE_PATHS["plane"])
 
 # BOSS图片
-boss_1_img = pygame.image.load("boss_1.png")
-boss_2_img = pygame.transform.scale(pygame.image.load("boss_2.png"), (577 // 2, 374 // 2))
+boss_1_img = load_image(IMAGE_PATHS["boss_1"])
+boss_2_img = pygame.transform.scale(load_image(IMAGE_PATHS["boss_2"]), (577 // 2, 374 // 2))
 
 # 敌人图片
-enemy_images = [pygame.image.load(f"alien_{i}.png") for i in range(1, 6)]
+enemy_images = [load_image(path) for path in IMAGE_PATHS["enemies"]]
 
 # 字体
-myFont = pygame.font.SysFont("simhei", 45)
-info_font = pygame.font.SysFont("simhei", 25)
-score_font = pygame.font.SysFont("simhei", 36)
+FONT_SIZES = {
+    "large": 45,
+    "medium": 36,
+    "small": 25
+}
+myFont = pygame.font.SysFont("simhei", FONT_SIZES["large"])
+info_font = pygame.font.SysFont("simhei", FONT_SIZES["small"])
+score_font = pygame.font.SysFont("simhei", FONT_SIZES["medium"])
 
 # 颜色定义
-RED = (255, 0, 0)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-YELLOW = (255, 255, 0)
+COLORS = {
+    "RED": (255, 0, 0),
+    "BLACK": (0, 0, 0),
+    "WHITE": (255, 255, 255),
+    "YELLOW": (255, 255, 0)
+}
 
 # 其它
-FPS = 60  # 游戏帧率
-NORMAL_TO_BOSS1 = 5  # 击落普通敌机数量达到该值生成Boss1
-BOSS1_TO_BOSS2 = 5  # 击落Boss1数量达到该值生成Boss2
+FPS = 60
+NORMAL_TO_BOSS1 = 5
+BOSS1_TO_BOSS2 = 5
