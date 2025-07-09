@@ -1,8 +1,12 @@
 import pygame
 
-# 游戏窗口尺寸
-WIDTH, HEIGHT = 512, 768
 pygame.init()
+
+# 坐标映射参数
+CAMERA_WIDTH = 640
+CAMERA_HEIGHT = 480
+GAME_WIDTH = 512
+GAME_HEIGHT = 768
 
 # 资源文件路径
 IMAGE_PATHS = {

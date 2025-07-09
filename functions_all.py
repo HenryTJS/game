@@ -3,28 +3,21 @@ import random
 import time
 import cv2
 from pygame.constants import (K_SPACE, K_m, K_k, K_f, K_ESCAPE, K_a, K_d, K_s, K_w, K_LEFT, K_RIGHT, K_UP, K_DOWN)
-from resource_load import (myFont, COLORS, score_font, info_font, WIDTH, HEIGHT, bg0, start, NORMAL_TO_BOSS1,
-                           BOSS1_TO_BOSS2, enemy_images, FPS, bg1, plane, boss_1_img, boss_2_img)
+from resource_load import (myFont, COLORS, score_font, info_font, bg0, start, NORMAL_TO_BOSS1,BOSS1_TO_BOSS2,
+                           enemy_images, FPS, bg1, plane, boss_1_img, boss_2_img, CAMERA_WIDTH,
+                           CAMERA_HEIGHT, GAME_HEIGHT, GAME_WIDTH)
 from high_score import save_high_score, load_high_score
 from threading import Thread
 from collections import deque
 
-# 人脸控制相关变量
+# 摄像头设置
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_alt2.xml")
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("无法打开摄像头")
     exit()
-
-# 摄像头设置
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-# 坐标映射参数
-CAMERA_WIDTH = 640
-CAMERA_HEIGHT = 480
-GAME_WIDTH = WIDTH
-GAME_HEIGHT = HEIGHT
 
 # 人脸检测线程
 face_detection_running = True
@@ -33,11 +26,7 @@ face_positions = deque(maxlen=5)
 
 
 def map_camera_to_game(camera_x, camera_y):
-    # 水平翻转x坐标
-    flipped_x = CAMERA_WIDTH - camera_x
-
-    # 线性映射
-    game_x = flipped_x * (GAME_WIDTH / CAMERA_WIDTH)
+    game_x = (CAMERA_WIDTH - camera_x) * (GAME_WIDTH / CAMERA_WIDTH)
     game_y = camera_y * (GAME_HEIGHT / CAMERA_HEIGHT)
 
     return game_x, game_y
@@ -65,14 +54,8 @@ def face_detection_thread():
         if len(faces) > 0:
             main_face = max(faces, key=lambda rect: rect[2] * rect[3])
             x, y, w, h = main_face
-            face_center_x = x + w // 2
-            face_center_y = y + h // 2
-
-            # 坐标转换
+            face_center_x, face_center_y = x + w // 2, y + h // 2
             game_x, game_y = map_camera_to_game(CAMERA_WIDTH - face_center_x, face_center_y)
-            game_x = max(0, min(game_x, GAME_WIDTH))
-            game_y = max(0, min(game_y, GAME_HEIGHT))
-
             current_face_pos = (game_x, game_y)
             face_positions.append((game_x, game_y))
         else:
@@ -336,7 +319,7 @@ def update_combo_system(game_vars):
                 print(f"连击成功! 当前分数: {int(game_vars['score'])} (连击数: {game_vars['combo_count']})")
 
 
-# 更新玩家位置（修改人脸控制部分）
+# 更新玩家位置
 def update_player_position(game_vars, mouse_x, mouse_y):
     if game_vars['control_type'] == 0:  # 鼠标控制
         target_x = mouse_x - game_vars['plane_w'] / 2
