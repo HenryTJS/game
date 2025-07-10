@@ -3,9 +3,7 @@ import random
 import time
 import cv2
 from pygame.constants import (K_SPACE, K_m, K_k, K_f, K_ESCAPE, K_a, K_d, K_s, K_w, K_LEFT, K_RIGHT, K_UP, K_DOWN)
-from resource_load import (myFont, COLORS, score_font, info_font, bg0, start, NORMAL_TO_BOSS1,BOSS1_TO_BOSS2,
-                           enemy_images, FPS, bg1, plane, boss_1_img, boss_2_img, CAMERA_WIDTH,
-                           CAMERA_HEIGHT, GAME_HEIGHT, GAME_WIDTH)
+from resource_load import (myFont, COLORS, score_font, info_font, bg0, start, NORMAL_TO_BOSS1,BOSS1_TO_BOSS2, enemy_images, FPS, bg1, plane, boss_1_img, boss_2_img, CAMERA_WIDTH, CAMERA_HEIGHT, GAME_HEIGHT, GAME_WIDTH)
 from high_score import save_high_score, load_high_score
 from threading import Thread
 from collections import deque
@@ -39,10 +37,8 @@ def face_detection_thread():
         if not ret:
             continue
 
-        # 左右翻转摄像头画面
-        frame = cv2.flip(frame, 1)
-
         # 显示摄像头窗口
+        frame = cv2.flip(frame, 1)
         cv2.imshow("Camera (Face Control)", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -87,9 +83,7 @@ def get_center_and_radius(rect, radius):
 def check_collision(rect1, rect2, radius1=None, radius2=None):
     center1, r1 = get_center_and_radius(rect1, radius1)
     center2, r2 = get_center_and_radius(rect2, radius2)
-
-    dx = center1[0] - center2[0]
-    dy = center1[1] - center2[1]
+    dx, dy = center1[0] - center2[0], center1[1] - center2[1]
     distance_squared = dx * dx + dy * dy
     radius_sum = r1 + r2
     return distance_squared <= radius_sum * radius_sum
@@ -626,7 +620,7 @@ def handle_game_over(game_vars):
     final_score = max(0, game_vars['score'])
     high_score = load_high_score()
 
-    if final_score <= 0:
+    if final_score < 0:
         print("游戏结束，最终得分为0")
 
     return show_game_over(final_score, high_score)
